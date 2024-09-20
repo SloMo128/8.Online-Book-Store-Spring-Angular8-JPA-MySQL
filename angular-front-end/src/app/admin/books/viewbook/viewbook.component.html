@@ -1,0 +1,50 @@
+
+<div class="container mt-4">
+  <h1 class="mb-4 text-center">Book Details</h1>
+
+  <div class="row mb-4">
+    <!-- Book Details Column -->
+    <div class="col-md-6">
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <th scope="row">Book ID:</th>
+                <td>{{ book.id }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Book Name:</th>
+                <td>{{ book.name }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Author:</th>
+                <td>{{ book.author }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Price:</th>
+                <td>{{ book.price | currency }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Book Image Column -->
+    <div class="col-md-6 d-flex align-items-center justify-content-center">
+      <div class="card shadow-sm">
+        <img [src]="book.retrievedImage" class="card-img-top img-fluid rounded" alt="Book Image" style="max-width: 100%;">
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <a class="btn btn-warning btn-lg mx-2" (click)="editBook()">
+      <i class="bi bi-pencil-square"></i> Edit
+    </a>
+    <a class="btn btn-danger btn-lg mx-2" (click)="deleteBook()">
+      <i class="bi bi-trash"></i> Delete
+    </a>
+  </div>
+</div>

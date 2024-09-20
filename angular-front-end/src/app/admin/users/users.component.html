@@ -1,0 +1,59 @@
+<div class="alert mt-3" [ngClass]="{'alert-danger': feedback.feedbackType === 'error', 'alert-success': feedback.feedbackType === 'success'}">
+  {{feedback.feedbackmsg}}
+</div>
+
+<div class="container mt-4">
+  <h1 class="mb-4">Users Admin</h1>
+  
+  <div class="d-flex justify-content-between mb-4">
+    <button class="btn btn-primary" (click)="addUser()">
+      <i class="bi bi-person-fill-add"></i> Add New User
+    </button>
+  </div>
+  
+  <div class="row">
+    <!-- User List Section -->
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Users List</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ findUserProfile(user.type) }}</td>
+                <td>
+                  <button type="button" class="btn btn-info btn-sm" (click)="viewUser(user.id)">
+                    <i class="bi bi-person-fill-gear"></i> Show Details
+                  </button>
+                </td>                
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- User Details Section -->
+    <div class="col-md-6">
+      <div *ngIf="action === 'add'">
+        <app-adduser [user]="selectedUser" (userAddedEvent)="refreshData()"></app-adduser>
+      </div>
+      <div *ngIf="action === 'view'">
+        <app-viewuser [user]="selectedUser" (userDeletedEvent)="refreshData()"></app-viewuser>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,165 @@
+<div *ngIf="feedback.feedbackType === 'error'" class="alert alert-danger d-flex align-items-center" role="alert">
+  <div><img src="assets/img/warning.png" alt="warning" class="ms-2" style="width: 30px; height: auto;"></div>
+  <span>{{ feedback.feedbackmsg }}</span>
+</div>
+
+<div *ngIf="isLoading" class="d-flex justify-content-center align-items-center vh-100">
+  <div class="spinner-border text-primary" role="status"></div>
+</div>
+
+<div *ngIf="isLoadingPage" class="container my-4">
+  <div class="row align-items-center">
+    <!-- Title -->
+    <div class="col-md-4">
+      <h1 class="h3">Books</h1>
+    </div>
+
+    <!-- Search Form -->
+    <div class="col-md-4 d-flex">
+      <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="d-flex flex-grow-1">
+        <div class="input-group">
+          <input id="searchInput" type="text" formControlName="search" placeholder="Search Book or Author"
+            class="form-control">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Cart Dropdown -->
+    <div class="col-md-4 d-flex justify-content-end">
+      <div class="dropdown">
+        <button class="btn btn-info btn-lg dropdown-toggle" type="button" id="cartDropdown" data-toggle="dropdown"
+          aria-expanded="false">
+          <span class="fa fa-shopping-cart mr-2"></span>
+          Books in Cart: <span class="badge badge-light">{{ cartBooks.length }}</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right p-3" aria-labelledby="cartDropdown" style="min-width: 400px;">
+          <!-- Check if cart is empty -->
+          <div *ngIf="cartBooks.length === 0" class="alert alert-warning text-center">
+            Your cart is empty.
+          </div>
+
+          <!-- Show cart items if not empty -->
+          <div *ngIf="cartBooks.length > 0">
+            <div *ngFor="let item of cartBooks" class="dropdown-item p-0">
+              <div class="d-flex align-items-center justify-content-between py-2">
+                <!-- Book Image -->
+                <div class="mr-2">
+                  <img [src]="item.retrievedImage" alt="{{ item.name }}" height="50" width="35">
+                </div>
+                <!-- Book Name with Truncation -->
+                <div class="mr-2">
+                  <span>{{ item.name.length > 15 ? (item.name | slice:0:15) + '...' : item.name }}</span>
+                </div>
+                <!-- Quantity -->
+                <div class="mr-2">
+                  <input type="number" class="form-control form-control-sm text-center" [(ngModel)]="item.quantity"
+                    min="1">
+                </div>
+                <!-- Price -->
+                <div class="mr-2">
+                  <strong>${{ item.price * item.quantity | number:'1.2-2' }}</strong>
+                </div>
+                <!-- Remove Button -->
+                <button class="btn btn-danger btn-sm" (click)="removeBook(item)">
+                  <img src="assets/img/trash.png" alt="Trash" style="width: 20px; height: auto;">
+                </button>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="d-flex flex-column">
+              <button class="btn btn-success mb-2" (click)="goToCart()">View Cart: <strong>${{ totalPrice |
+                  number:'1.2-2' }}</strong></button>
+              <button class="btn btn-warning" (click)="emptyCart()">Empty Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert if search yields no results -->
+  <div *ngIf="books.length === 0 && searchKeyword" class="alert alert-info mt-4 text-center">
+    No Books or Authors found matching "{{ searchKeyword }}".
+  </div>
+
+  <!-- Book List -->
+  <div class="container my-4">
+    <div class="row mb-3">
+      <!-- Sorting Buttons -->
+      <div class="col-12">
+        <div class="d-flex justify-content-start">
+          <button class="btn btn-white mr-2" (click)="toggleSortOrder()">
+            <img *ngIf="order === 'ASC'" src="assets/img/Ascending.png" alt="Sort ASC">
+            <img *ngIf="order === 'DESC'" src="assets/img/Descending.png" alt="Sort DESC">
+          </button>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="orderDropdown" data-toggle="dropdown"
+              aria-expanded="false">
+              Order by: {{ sortField }}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="orderDropdown">
+              <a class="dropdown-item" (click)="setOrderOption('author')">Author</a>
+              <a class="dropdown-item" (click)="setOrderOption('price')">Price</a>
+              <a class="dropdown-item" (click)="setOrderOption('name')">Name</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Books Pagination -->
+    <div class="row">
+      <div class="col-md-4 mb-4"
+        *ngFor="let book of books | paginate: { itemsPerPage: bookPage, currentPage: pagination + 1, totalItems: totalItems }; let i = index">
+        <div class="card h-100">
+          <img class="card-img-top mx-auto mt-3" [src]="book.retrievedImage" alt="{{ book.name }}"
+            style="height: 300px; width: 200px;">
+          <div class="card-body text-center">
+            <h5 class="card-title">
+              {{ book.name.length > 20 ? (book.name | slice:0:20) + '...' : book.name }}
+            </h5>
+            <!-- Display original price with strikethrough if discount is available -->
+            <span *ngIf="book.discount > 0" class="text-muted" style="text-decoration: line-through;">
+              ${{ book.price | number: '1.2-2' }}
+            </span>
+            <!-- Display only original price if no discount -->
+            <strong *ngIf="book.discount == 0 || book.discount == null">
+              ${{ book.price | number: '1.2-2' }}
+            </strong><br>
+            <!-- Display final price after discount -->
+            <strong *ngIf="book.discount > 0">
+              ${{ book.finalPrice | number: '1.2-2' }}
+            </strong>
+            <!-- Display discount percentage if applicable -->
+            <span *ngIf="book.discount > 0" class="text-danger ml-2">
+              -{{ book.discount }}%
+            </span>
+
+            <p class="card-text">{{ book.author }}</p>
+            <div class="d-flex justify-content-center align-items-center mb-3">
+              <!-- Ensure the form is initialized -->
+              <form *ngIf="quantityForms[book.id]" [formGroup]="quantityForms[book.id]">
+                <div class="input-group">
+                  <input type="number" class="form-control form-control-sm mr-2" formControlName="quantity" min="0"
+                    style="width: 60px;">
+                  <div class="input-group-append">
+                    <button class="btn btn-primary btn-sm" (click)="addToCart(book.id)"
+                      [disabled]="book.isAdded || quantityForms[book.id].get('quantity').value <= 0">
+                      Add To Cart
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4">
+      <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
+    </div>
+  </div>
+</div>

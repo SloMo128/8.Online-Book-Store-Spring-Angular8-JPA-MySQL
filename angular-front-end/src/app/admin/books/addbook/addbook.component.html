@@ -1,0 +1,68 @@
+<h1 class="my-4">
+  {{ bookForm.get('name').value ? 'Edit' : 'Add' }} Book - {{ bookForm.get('name').value ? bookForm.get('name').value : 'New Book' }}
+</h1>
+
+<form [formGroup]="bookForm" (ngSubmit)="saveBook()">
+  <div class="container">
+    <div class="row">
+      <!-- Book Name -->
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" class="form-control" id="name" placeholder="Book Name" formControlName="name" required>
+          <div *ngIf="bookForm.get('name').invalid && bookForm.get('name').touched" class="text-danger mt-1">
+            <div *ngIf="bookForm.get('name').errors.required">Name is required.</div>
+            <div *ngIf="bookForm.get('name').errors.minlength">Name must be at least 2 characters long.</div>
+            <div *ngIf="bookForm.get('name').errors.maxlength">Name cannot exceed 50 characters.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Author -->
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="author">Author</label>
+          <input type="text" class="form-control" id="author" placeholder="Author" formControlName="author" required>
+          <div *ngIf="bookForm.get('author').invalid && bookForm.get('author').touched" class="text-danger mt-1">
+            <div *ngIf="bookForm.get('author').errors.required">Author is required.</div>
+            <div *ngIf="bookForm.get('author').errors.minlength">Author must be at least 2 characters long.</div>
+            <div *ngIf="bookForm.get('author').errors.maxlength">Author cannot exceed 50 characters.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Price -->
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input type="text" class="form-control" id="price" placeholder="Price" formControlName="price" required>
+          <div *ngIf="bookForm.get('price').invalid && bookForm.get('price').touched" class="text-danger mt-1">
+            <div *ngIf="bookForm.get('price').errors.required">Price is required.</div>
+            <div *ngIf="bookForm.get('price').errors.pattern">Price must be a number with up to two decimal places (e.g., 25.00).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="col-md-6 mb-3">
+        <div class="form-group">
+          <label for="imageFile">Upload Image</label>
+          <input type="file" id="imageFile" (change)="onFileChanged($event)" class="form-control-file">
+          <!-- Preview the newly selected image -->
+          <img [src]="imgURL" *ngIf="imgURL" style="width: 100px;" class="mt-2 img-thumbnail">
+        </div>
+      </div>
+    </div>
+
+    <!-- Display Existing Image -->
+    <div *ngIf="existingImageURL" class="form-group">
+      <label>Current Image</label>
+      <img [src]="existingImageURL" class="img-thumbnail mt-2" style="max-height: 200px; max-width: 200px;">
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-success" [disabled]="bookForm.invalid">Save Book</button>
+  </div>
+</form>

@@ -1,0 +1,66 @@
+<div *ngIf="feedback.feedbackType === 'error'" class="alert alert-danger d-flex align-items-center" role="alert">
+    <div><img src="assets/img/warning.png" alt="warning" class="ms-2" style="width: 30px; height: auto;"></div>
+    <span>{{ feedback.feedbackmsg }}</span>
+</div>
+  
+  <div class="container my-5">
+    <h2 class="text-center mb-4">Your Shopping Cart</h2>
+    <div *ngIf="cartBooks.length === 0" class="alert alert-warning text-center">
+      Your cart is empty.
+    </div>
+  
+    <div *ngIf="cartBooks.length > 0">
+      <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Image</th>
+            <th scope="col">Book</th>
+            <th scope="col">Author</th>
+            <th scope="col" class="text-center">Qty</th>
+            <th scope="col" class="text-right">Price</th>
+            <th scope="col" class="text-center">Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of cartBooks">
+            <td class="align-middle text-center">
+              <img [src]="item.retrievedImage" alt="{{item.name}}" class="img-thumbnail" style="width: 60px;">
+            </td>
+            <td class="align-middle">{{ item.name }}</td>
+            <td class="align-middle">{{ item.author }}</td>
+            <td class="align-middle" style="width: 100px;">
+              <input type="number" class="form-control form-control-sm text-center" [(ngModel)]="item.quantity" min="1">
+            </td>
+            <td class="align-middle text-right">
+              <strong>${{item.price * item.quantity | number:'1.2-2'}}</strong>
+            </td>
+            <td class="align-middle text-center">
+              <button class="btn btn-danger btn-sm" (click)="removeFromCart(item)">
+                <img src="assets/img/trash.png" alt="Trash" style="width: 30px; height: auto;">
+            </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <button class="btn btn-outline-warning" (click)="emptyCart()">
+          <span class="fa fa-trash mr-2"></span>Empty Cart
+        </button>
+        <h4 class="mb-0">Total: <span class="text-success">${{ totalPrice | number:'1.2-2' }}</span></h4>
+      </div>
+  
+      <div class="text-right mt-4">
+        <button *ngIf="!paymentInProgress" class="btn btn-lg btn-success" (click)="proceedToCheckout()">
+          <span class="fa fa-credit-card mr-2"></span>Proceed to Checkout
+        </button>
+  
+        <div *ngIf="feedback.feedbackType === 'success'" class="alert alert-success d-flex align-items-center"
+            role="alert">
+            <div><img src="assets/img/check.png" alt="check" class="ms-2" style="width: 30px; height: auto;"></div>
+            <span>{{ feedback.feedbackmsg }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  

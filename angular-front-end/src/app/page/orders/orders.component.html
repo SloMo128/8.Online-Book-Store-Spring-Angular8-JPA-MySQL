@@ -1,0 +1,44 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Order Management</h2>
+
+  <!-- Orders List -->
+  <div class="mb-4">
+    <h3 class="mb-3">Orders</h3>
+    <ul class="list-group">
+      <!-- Loop through orders -->
+      <li *ngFor="let order of orders" class="list-group-item">
+        <div>
+          <strong>Order ID: {{ order.id }}</strong>
+        </div>
+
+        <!-- Books for each order -->
+        <div>
+          <h5 class="mt-3">Books:</h5>
+          <ul class="list-group">
+            <li *ngFor="let book of displayedBooks" class="list-group-item">
+              Book Name: {{ book.name }}
+              {{ book.author }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Message if no books are found -->
+        <div *ngIf="!order.books || order.books.length === 0" class="mt-2">
+          No books found for this order.
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Display Selected Book Details -->
+  <div *ngIf="displayedBooks" class="mt-4">
+    <h3>Selected Book Details</h3>
+    <div>
+      <strong>Book Name:</strong> {{ displayedBooks.name }}<br />
+      <strong>Book ID:</strong> {{ displayedBooks.bookId }}<br />
+      <strong>Author:</strong> {{ displayedBooks.author }}<br />
+      <strong>Description:</strong> {{ displayedBooks.description }}<br />
+      <!-- Add more fields as needed -->
+    </div>
+  </div>
+</div>

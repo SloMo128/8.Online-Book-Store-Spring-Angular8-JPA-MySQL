@@ -1,0 +1,60 @@
+<div *ngIf="feedback.feedbackType === 'error_login'" class="alert alert-danger d-flex align-items-center" role="alert">
+  <div>
+    <img src="assets/img/warning.png" alt="warning" class="ms-2" style="width: 30px; height: auto;">
+  </div>
+  <span>{{ feedback.feedbackmsg }}</span>
+</div>
+
+<div *ngIf="isLoading" class="d-flex justify-content-center align-items-center vh-100">
+  <div class="spinner-border text-primary" role="status"></div>
+</div>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card" style="width: 100%; max-width: 400px;">
+    <div class="card-body">
+      <h2 class="card-title text-center mb-4">Login</h2>
+      <form [formGroup]="userForm" (ngSubmit)="login()">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input id="name" 
+                 type="text" 
+                 formControlName="name" 
+                 class="form-control" 
+                 placeholder="Enter your name">
+          <div *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)" class="invalid-feedback">
+            <div *ngIf="userForm.get('name')?.errors?.required">Name is required.</div>
+            <div *ngIf="userForm.get('name')?.errors?.minlength">Name must be at least 2 characters long.</div>
+            <div *ngIf="userForm.get('name')?.errors?.maxlength">Name cannot be longer than 50 characters.</div>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-group">
+            <input [type]="passwordVisible ? 'text' : 'password'" 
+                   id="password" 
+                   formControlName="password" 
+                   class="form-control" 
+                   placeholder="Enter your password">
+            <div class="input-group-append">
+              <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+                <i class="bi" [ngClass]="{'bi-eye': !passwordVisible, 'bi-eye-slash': passwordVisible}"></i>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="userForm.get('password')?.invalid && (userForm.get('password')?.dirty || userForm.get('password')?.touched)" class="invalid-feedback">
+            <div *ngIf="userForm.get('password')?.errors?.required">Password is required.</div>
+            <div *ngIf="userForm.get('password')?.errors?.minlength">Password must be at least 6 characters long.</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+
+        <!-- Feedback Message -->
+        <div *ngIf="feedback.feedbackmsg" class="alert mt-3" [ngClass]="{'alert-danger': feedback.feedbackType === 'error', 'alert-success': feedback.feedbackType === 'success'}">
+          {{ feedback.feedbackmsg }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

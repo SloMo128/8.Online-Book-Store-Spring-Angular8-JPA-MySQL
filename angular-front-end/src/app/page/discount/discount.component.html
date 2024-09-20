@@ -1,0 +1,169 @@
+<div *ngIf="!isLoadingPage" class="container">
+  <!-- Feedback Message -->
+  <div *ngIf="feedback.feedbackmsg" class="alert" [ngClass]="{
+    'alert-danger': feedback.feedbackType === 'error',
+    'alert-success': feedback.feedbackType === 'success',
+    'alert-info': feedback.feedbackType === 'info',
+    'alert-warning': feedback.feedbackType === 'warning'
+  }" role="alert">
+    {{ feedback.feedbackmsg }}
+  </div>
+
+  <div class="row">
+    <!-- Books List -->
+    <div class="col-md-7">
+      <div *ngIf="books.length > 0; else noBooksMessage">
+        <h2 class="mb-4">Available Books</h2>
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">Image</th>
+              <th scope="col">Name</th>
+              <th scope="col">Author</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let book of books">
+              <td>
+                <img [src]="book.retrievedImage" alt="{{ book.name }}" class="img-fluid rounded"
+                  style="max-width: 100px;">
+              </td>
+              <td>{{ book.name }}</td>
+              <td>{{ book.author }}</td>
+              <td>
+                <button class="btn btn-primary" (click)="viewBook(book.id)">View</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Books Message -->
+      <ng-template #noBooksMessage>
+        <p class="text-center">No books available.</p>
+      </ng-template>
+    </div>
+
+    <!-- Book Details Section -->
+    <div class="col-md-5" *ngIf="selectedBook">
+      <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+          <h1 class="h4 mb-4 text-center">Book Details</h1>
+
+          <div class="row mb-4">
+            <!-- Book Details Column -->
+            <div class="col-md-6">
+              <!-- Edit Mode -->
+              <form *ngIf="isEditing" (ngSubmit)="saveBook()">
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Book ID:</th>
+                      <td>{{ selectedBook.id }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Book Name:</th>
+                      <td>{{ selectedBook.name }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Author:</th>
+                      <td>{{ selectedBook.author }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Price:</th>
+                      <td>{{ selectedBook.price | currency }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Discount:</th>
+                      <td>
+                        <input type="number" [(ngModel)]="selectedBook.discount" name="discount"
+                          class="form-control" min="0" max="100">
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Price Discount:</th>
+                      <td>{{ getDiscountedPrice(selectedBook) | number:'1.2-2' }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Start Discount:</th>
+                      <td>
+                        <input type="date" [(ngModel)]="selectedBook.startDate" name="startDate"
+                          class="form-control">
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">End Discount:</th>
+                      <td>
+                        <input type="date" [(ngModel)]="selectedBook.endDate" name="endDate"
+                          class="form-control">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </form>
+
+              <!-- View Mode -->
+              <div *ngIf="!isEditing">
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Book ID:</th>
+                      <td>{{ selectedBook.id }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Book Name:</th>
+                      <td>{{ selectedBook.name }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Author:</th>
+                      <td>{{ selectedBook.author }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Price:</th>
+                      <td>{{ selectedBook.price | currency }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Discount:</th>
+                      <td>{{ selectedBook.discount }} %</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Price Discount:</th>
+                      <td>{{ getDiscountedPrice(selectedBook) | number:'1.2-2' }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Start Discount:</th>
+                      <td>{{ selectedBook.startDate | date:'dd/MM/yyyy' }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">End Discount:</th>
+                      <td>{{ selectedBook.endDate | date:'dd/MM/yyyy' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Book Image Column -->
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+              <div class="card shadow-sm">
+                <img [src]="selectedBook.retrievedImage" class="card-img-top img-fluid rounded" alt="Book Image"
+                  style="max-height: 200px; object-fit: cover;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="text-center">
+            <button *ngIf="!isEditing" class="btn btn-warning btn-lg mx-2" (click)="editBook()">
+              <i class="bi bi-pencil-square"></i> Edit Discount
+            </button>
+            <button *ngIf="isEditing" type="button" class="btn btn-success btn-lg mx-2" (click)="saveBook()">
+              <i class="bi bi-save"></i> Save Discount
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
